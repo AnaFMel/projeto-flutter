@@ -63,33 +63,33 @@ class _BookListScreenState extends State<BookListScreen> {
 
   Future<List<Book>> fetchBooks(String query) async {
     final response =
-        await http.get(Uri.parse('$googleBooksApiUrl?q=$query&key=$apiKey'));
+    await http.get(Uri.parse('$googleBooksApiUrl?q=$query&key=$apiKey'));
 
     if (response.statusCode == 200) {
       final Map<String, dynamic> data = json.decode(response.body);
       final List<dynamic> items = data['items'];
 
       List<Book> books = items.map((item) {
-  final volumeInfo = item['volumeInfo'];
+        final volumeInfo = item['volumeInfo'];
 
-  final imageLinks = volumeInfo['imageLinks'];
-  final thumbnail = imageLinks != null ? imageLinks['thumbnail'] : null;
+        final imageLinks = volumeInfo['imageLinks'];
+        final thumbnail = imageLinks != null ? imageLinks['thumbnail'] : null;
 
-  final saleInfo = item['saleInfo'];
-  final buyLink = saleInfo != null ? saleInfo['buyLink'] : null;
+        final saleInfo = item['saleInfo'];
+        final buyLink = saleInfo != null ? saleInfo['buyLink'] : null;
 
-  return Book(
-    title: volumeInfo['title'],
-    author: volumeInfo['authors'] != null ? volumeInfo['authors'][0] : 'Autor Desconhecido',
-    description: volumeInfo['description'] ?? 'Sem descrição',
-    imageUrl: thumbnail ?? '',
-    publishedDate: volumeInfo['publishedDate'] ?? 'Data Desconhecida',
-    pageCount: volumeInfo['pageCount'] ?? 0,
-    publisher: volumeInfo['publisher'] ?? 'Editora Desconhecida',
-    categories: volumeInfo['categories'] != null ? List<String>.from(volumeInfo['categories']) : [],
-    buyLink: buyLink ?? '',
-  );
-}).toList();
+        return Book(
+          title: volumeInfo['title'],
+          author: volumeInfo['authors'] != null ? volumeInfo['authors'][0] : '(Autor Desconhecido)',
+          description: volumeInfo['description'] ?? '(Descrição não encontrada)',
+          imageUrl: thumbnail ?? '',
+          publishedDate: volumeInfo['publishedDate'] ?? '(Data Desconhecida)',
+          pageCount: volumeInfo['pageCount'] ?? 0,
+          publisher: volumeInfo['publisher'] ?? '(Editora Desconhecida)',
+          categories: volumeInfo['categories'] != null ? List<String>.from(volumeInfo['categories']) : [],
+          buyLink: buyLink ?? '',
+        );
+      }).toList();
 
 
       return books;
@@ -102,7 +102,7 @@ class _BookListScreenState extends State<BookListScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Livros'),
+        title: Text('Livraria Flutter'),
       ),
       body: Column(
         children: [
@@ -123,32 +123,32 @@ class _BookListScreenState extends State<BookListScreen> {
             child: _isLoading
                 ? Center(child: CircularProgressIndicator())
                 : _books.isEmpty
-                    ? Center(child: Text('Nenhum livro encontrado'))
-                    : ListView.builder(
-                        itemCount: _books.length,
-                        itemBuilder: (context, index) {
-                          return ListTile(
-                            title: Text(_books[index].title),
-                            subtitle: Text(_books[index].author),
-                            leading: CachedNetworkImage(
-                              imageUrl: _books[index].imageUrl,
-                              placeholder: (context, url) =>
-                                  CircularProgressIndicator(),
-                              errorWidget: (context, url, error) =>
-                                  Icon(Icons.error),
-                            ),
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      BookDetailScreen(book: _books[index]),
-                                ),
-                              );
-                            },
-                          );
-                        },
+                ? Center(child: Text('Nenhum livro encontrado'))
+                : ListView.builder(
+              itemCount: _books.length,
+              itemBuilder: (context, index) {
+                return ListTile(
+                  title: Text(_books[index].title),
+                  subtitle: Text(_books[index].author),
+                  leading: CachedNetworkImage(
+                    imageUrl: _books[index].imageUrl,
+                    placeholder: (context, url) =>
+                        CircularProgressIndicator(),
+                    errorWidget: (context, url, error) =>
+                        Icon(Icons.error),
+                  ),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            BookDetailScreen(book: _books[index]),
                       ),
+                    );
+                  },
+                );
+              },
+            ),
           ),
         ],
       ),
@@ -167,38 +167,54 @@ class BookDetailScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text(book.title),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('Autor: ${book.author}'),
-            SizedBox(height: 8),
-            Text('Descrição: ${book.description}'),
-            SizedBox(height: 8),
-            Text('Data de Publicação: ${book.publishedDate}'),
-            SizedBox(height: 8),
-            Text('Número de Páginas: ${book.pageCount}'),
-            SizedBox(height: 8),
-            Text('Editora: ${book.publisher}'),
-            SizedBox(height: 8),
-            Text('Categorias: ${book.categories.join(', ')}'),
-            SizedBox(height: 16),
-            SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: () {
-                _launchURL(book.buyLink);
-              },
-              child: Text('Comprar Agora'),
-            ),
-            // Adicione mais detalhes conforme necessário
-          ],
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                child: CachedNetworkImage(
+                  imageUrl: book.imageUrl,
+                  placeholder: (context, url) =>
+                      CircularProgressIndicator(),
+                  errorWidget: (context, url, error) =>
+                      Icon(Icons.error),
+                ),
+                alignment: Alignment.topCenter,
+              ),
+              SizedBox(height: 8),
+              Text('Autor: ${book.author}',),
+              SizedBox(height: 8),
+              Text('Descrição: ${book.description}'),
+              SizedBox(height: 8),
+              Text('Data de Publicação: ${book.publishedDate}'),
+              SizedBox(height: 8),
+              Text('Número de Páginas: ${book.pageCount}'),
+              SizedBox(height: 8),
+              Text('Editora: ${book.publisher}'),
+              SizedBox(height: 8),
+              Text('Categorias: ${book.categories.join(', ')}'),
+              SizedBox(height: 16),
+              SizedBox(height: 16),
+              Container(
+                child: ElevatedButton(
+                  onPressed: () {
+                    _launchURL(book.buyLink);
+                  },
+                  child: Text('Comprar Agora'),
+                ),
+                alignment: Alignment.bottomCenter,
+              ),
+              // Adicione mais detalhes conforme necessário
+            ],
+          ),
         ),
       ),
     );
   }
 
-_launchURL(String url) async {
+  _launchURL(String url) async {
     if (await canLaunch(url)) {
       await launch(url);
     } else {
