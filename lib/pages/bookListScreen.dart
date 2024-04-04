@@ -2,7 +2,9 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:livraria_flutter/pages/ReadingList.dart';
 import '../models/book.dart';
+import '../repositories/reading_list_repository.dart';
 import 'bookDetailScreen.dart';
 
 class BookListScreen extends StatefulWidget {
@@ -15,7 +17,6 @@ class _BookListScreenState extends State<BookListScreen> {
   final String googleBooksApiUrl =
       'https://www.googleapis.com/books/v1/volumes';
 
-
   final TextEditingController _searchController = TextEditingController();
   List<Book> _books = [];
   bool _isLoading = false;
@@ -25,6 +26,8 @@ class _BookListScreenState extends State<BookListScreen> {
     super.initState();
     _searchBooks();
   }
+
+  ReadingListRepository _readingListRepository = ReadingListRepository();
 
   Future<void> _searchBooks() async {
     setState(() {
@@ -48,7 +51,7 @@ class _BookListScreenState extends State<BookListScreen> {
 
   Future<List<Book>> fetchBooks(String query) async {
     final response =
-    await http.get(Uri.parse('$googleBooksApiUrl?q=$query&key=$apiKey'));
+        await http.get(Uri.parse('$googleBooksApiUrl?q=$query&key=$apiKey'));
 
     if (response.statusCode == 200) {
       final Map<String, dynamic> data = json.decode(response.body);
@@ -65,17 +68,21 @@ class _BookListScreenState extends State<BookListScreen> {
 
         return Book(
           title: volumeInfo['title'],
-          author: volumeInfo['authors'] != null ? volumeInfo['authors'][0] : '(Autor Desconhecido)',
-          description: volumeInfo['description'] ?? '(Descrição não encontrada)',
+          author: volumeInfo['authors'] != null
+              ? volumeInfo['authors'][0]
+              : '(Autor Desconhecido)',
+          description:
+              volumeInfo['description'] ?? '(Descrição não encontrada)',
           imageUrl: thumbnail ?? '',
           publishedDate: volumeInfo['publishedDate'] ?? '(Data Desconhecida)',
           pageCount: volumeInfo['pageCount'] ?? 0,
           publisher: volumeInfo['publisher'] ?? '(Editora Desconhecida)',
-          categories: volumeInfo['categories'] != null ? List<String>.from(volumeInfo['categories']) : [],
+          categories: volumeInfo['categories'] != null
+              ? List<String>.from(volumeInfo['categories'])
+              : [],
           buyLink: buyLink ?? '',
         );
       }).toList();
-
 
       return books;
     } else {
@@ -87,6 +94,7 @@ class _BookListScreenState extends State<BookListScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        centerTitle: true,
         title: Text('Livraria Flutter'),
       ),
       body: Column(
@@ -108,35 +116,46 @@ class _BookListScreenState extends State<BookListScreen> {
             child: _isLoading
                 ? Center(child: CircularProgressIndicator())
                 : _books.isEmpty
-                ? Center(child: Text('Nenhum livro encontrado'))
-                : ListView.builder(
-              itemCount: _books.length,
-              itemBuilder: (context, index) {
-                return ListTile(
-                  title: Text(_books[index].title),
-                  subtitle: Text(_books[index].author),
-                  leading: CachedNetworkImage(
-                    imageUrl: _books[index].imageUrl,
-                    placeholder: (context, url) =>
-                        CircularProgressIndicator(),
-                    errorWidget: (context, url, error) =>
-                        Icon(Icons.error),
-                  ),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) =>
-                            BookDetailScreen(book: _books[index]),
+                    ? Center(child: Text('Nenhum livro encontrado'))
+                    : ListView.builder(
+                        itemCount: _books.length,
+                        itemBuilder: (context, index) {
+                          return ListTile(
+                            title: Text(_books[index].title!),
+                            subtitle: Text(_books[index].author!),
+                            leading: CachedNetworkImage(
+                              imageUrl: _books[index].imageUrl!,
+                              placeholder: (context, url) =>
+                                  CircularProgressIndicator(),
+                              errorWidget: (context, url, error) =>
+                                  Icon(Icons.error),
+                            ),
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      BookDetailScreen(book: _books[index]),
+                                ),
+                              );
+                            },
+                          );
+                        },
                       ),
-                    );
-                  },
-                );
-              },
-            ),
           ),
         ],
       ),
+      floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => ReadingList()),
+              );
+          },
+          child: Icon(Icons.collections_bookmark),
+          backgroundColor: Colors.black,
+          foregroundColor: Colors.white),
     );
   }
 }
