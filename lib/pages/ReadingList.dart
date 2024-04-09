@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../models/book.dart';
 import '../repositories/reading_list_repository.dart';
 import 'bookDetailScreen.dart';
@@ -40,7 +41,7 @@ class _ReadingListState extends State<ReadingList> {
               padding: const EdgeInsets.only(right: 10),
               child: Icon(Icons.collections_bookmark_sharp),
             ),
-            Text("Lista de Leitura"),
+            Text("Lista de Leitura", style: GoogleFonts.getFont('VT323')),
           ],
         ),
       ),

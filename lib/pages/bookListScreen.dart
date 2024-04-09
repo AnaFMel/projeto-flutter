@@ -6,6 +6,7 @@ import 'package:livraria_flutter/pages/ReadingList.dart';
 import '../models/book.dart';
 import '../repositories/reading_list_repository.dart';
 import 'bookDetailScreen.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class BookListScreen extends StatefulWidget {
   @override
@@ -95,63 +96,71 @@ class _BookListScreenState extends State<BookListScreen> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: Text('Livraria Flutter'),
+        title:
+            Text('CRUELO LIVROS', style: GoogleFonts.getFont('VT323')),
       ),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: TextField(
-              controller: _searchController,
-              decoration: InputDecoration(
-                labelText: 'Buscar Livros',
-                suffixIcon: IconButton(
-                  icon: Icon(Icons.search),
-                  onPressed: _searchBooks,
+      body: Container(
+        decoration: BoxDecoration(
+          image: DecorationImage(
+              image: AssetImage("assets/images/empty-home.png"),
+              fit: BoxFit.cover,
+              colorFilter: ColorFilter.mode(Colors.black.withOpacity(0.65), BlendMode.darken)),
+        ),
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: TextField(
+                controller: _searchController,
+                decoration: InputDecoration(
+                  labelText: 'Buscar Livros',
+                  suffixIcon: IconButton(
+                    icon: Icon(Icons.search),
+                    onPressed: _searchBooks,
+                  ),
                 ),
               ),
             ),
-          ),
-          Expanded(
-            child: _isLoading
-                ? Center(child: CircularProgressIndicator())
-                : _books.isEmpty
-                    ? Center(child: Text('Nenhum livro encontrado'))
-                    : ListView.builder(
-                        itemCount: _books.length,
-                        itemBuilder: (context, index) {
-                          return ListTile(
-                            title: Text(_books[index].title!),
-                            subtitle: Text(_books[index].author!),
-                            leading: CachedNetworkImage(
-                              imageUrl: _books[index].imageUrl!,
-                              placeholder: (context, url) =>
-                                  CircularProgressIndicator(),
-                              errorWidget: (context, url, error) =>
-                                  Icon(Icons.error),
-                            ),
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      BookDetailScreen(book: _books[index]),
-                                ),
-                              );
-                            },
-                          );
-                        },
-                      ),
-          ),
-        ],
+            Expanded(
+              child: _isLoading
+                  ? Center(child: CircularProgressIndicator())
+                  : _books.isEmpty
+                      ? Center(child: Text("Não encontramos nenhum livro...", style: TextStyle(fontSize: 20, color: Colors.white),))
+                      : ListView.builder(
+                          itemCount: _books.length,
+                          itemBuilder: (context, index) {
+                            return ListTile(
+                              title: Text(_books[index].title!),
+                              subtitle: Text(_books[index].author!),
+                              leading: CachedNetworkImage(
+                                imageUrl: _books[index].imageUrl!,
+                                placeholder: (context, url) =>
+                                    CircularProgressIndicator(),
+                                errorWidget: (context, url, error) =>
+                                    Icon(Icons.error),
+                              ),
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        BookDetailScreen(book: _books[index]),
+                                  ),
+                                );
+                              },
+                            );
+                          },
+                        ),
+            ),
+          ],
+        ),
       ),
       floatingActionButton: FloatingActionButton(
           onPressed: () {
             Navigator.push(
               context,
-              MaterialPageRoute(
-                builder: (context) => ReadingList()),
-              );
+              MaterialPageRoute(builder: (context) => ReadingList()),
+            );
           },
           child: Icon(Icons.collections_bookmark),
           backgroundColor: Colors.black,
