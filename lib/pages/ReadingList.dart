@@ -41,44 +41,63 @@ class _ReadingListState extends State<ReadingList> {
               padding: const EdgeInsets.only(right: 10),
               child: Icon(Icons.collections_bookmark_sharp),
             ),
-            Text("Lista de Leitura", style: GoogleFonts.getFont('VT323')),
+            Text("Lista de Leitura",
+                overflow: TextOverflow.ellipsis,
+                style: GoogleFonts.vt323(
+                  textStyle: TextStyle(
+                      letterSpacing: .5, fontSize: 40, wordSpacing: -9),
+                )),
           ],
         ),
       ),
-      body: Column(
-        children: [
-          Expanded(
-            child: _isLoading
-                ? Center(child: CircularProgressIndicator())
-                : livros.isEmpty
-                    ? Center(child: Text('Nenhum livro encontrado'))
-                    : ListView.builder(
-                        itemCount: livros!.length,
-                        itemBuilder: (context, index) {
-                          return ListTile(
-                            title: Text(livros![index].title!),
-                            subtitle: Text(livros![index].author!),
-                            leading: CachedNetworkImage(
-                              imageUrl: livros![index].imageUrl!,
-                              placeholder: (context, url) =>
-                                  CircularProgressIndicator(),
-                              errorWidget: (context, url, error) =>
-                                  Icon(Icons.error),
-                            ),
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      BookDetailScreen(book: livros![index]),
-                                ),
-                              );
-                            },
-                          );
-                        },
-                      ),
-          ),
-        ],
+      body: Container(
+        decoration: BoxDecoration(
+          image: DecorationImage(
+              image: AssetImage("assets/images/empty-home.png"),
+              fit: BoxFit.cover,
+              colorFilter: ColorFilter.mode(
+                  Colors.black.withOpacity(0.65), BlendMode.darken)),
+        ),
+        child: Column(
+          children: [
+            Expanded(
+              child: _isLoading
+                  ? Center(child: CircularProgressIndicator())
+                  : livros.isEmpty
+                      ? Center(
+                          child: Text("Não encontramos nenhum livro...",
+                              style: GoogleFonts.vt323(
+                                textStyle:
+                                    TextStyle(letterSpacing: .5, fontSize: 25),
+                              )))
+                      : ListView.builder(
+                          itemCount: livros!.length,
+                          itemBuilder: (context, index) {
+                            return ListTile(
+                              title: Text(livros![index].title!),
+                              subtitle: Text(livros![index].author!),
+                              leading: CachedNetworkImage(
+                                imageUrl: livros![index].imageUrl!,
+                                placeholder: (context, url) =>
+                                    CircularProgressIndicator(),
+                                errorWidget: (context, url, error) =>
+                                    Icon(Icons.error),
+                              ),
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        BookDetailScreen(book: livros![index]),
+                                  ),
+                                );
+                              },
+                            );
+                          },
+                        ),
+            ),
+          ],
+        ),
       ),
     );
   }

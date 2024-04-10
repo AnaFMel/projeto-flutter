@@ -10,7 +10,6 @@ class MyApp extends StatelessWidget {
     return ValueListenableBuilder(
       builder: (context, value, g) {
         return MaterialApp(
-          title: 'Livraria Flutter',
           initialRoute: '/',
           darkTheme: ThemeData.dark(),
           themeMode: ThemeMode.values.toList()[value as int],
