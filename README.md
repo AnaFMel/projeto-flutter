@@ -1,6 +1,6 @@
-# livraria_flutter
+# CRUELO LIVROS
 
-Projeto em Flutter, livraria virtual
+Projeto em flutter de livraria virtual com funcionalidade de lista de leitura.
 
 ## Grupo
 - Ana Clara
