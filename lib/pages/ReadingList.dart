@@ -61,7 +61,12 @@ class _ReadingListState extends State<ReadingList> {
               padding: const EdgeInsets.only(right: 10),
               child: Icon(Icons.collections_bookmark_sharp),
             ),
-            Text("Lista de Leitura", style: GoogleFonts.getFont('VT323')),
+            Text("Lista de Leitura",
+                overflow: TextOverflow.ellipsis,
+                style: GoogleFonts.vt323(
+                  textStyle: TextStyle(
+                      letterSpacing: .5, fontSize: 40, wordSpacing: -9),
+                )),
           ],
         ),
       ),

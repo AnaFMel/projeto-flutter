@@ -21,65 +21,85 @@ class BookDetailScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: Text(book.title!, style: GoogleFonts.getFont('VT323')),
+        title: Text(book.title!,
+            style: GoogleFonts.vt323(
+              textStyle: TextStyle(letterSpacing: .15, fontSize: 40),
+            )),
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                child: SizedBox(
-                  height: 250,
-                  child: CachedNetworkImage(
-                    imageUrl: book.imageUrl!,
-                    placeholder: (context, url) => CircularProgressIndicator(),
-                    errorWidget: (context, url, error) => Icon(Icons.error),
+      body: Container(
+        decoration: BoxDecoration(
+          color: Colors.brown,
+          image: DecorationImage(
+              image: AssetImage("assets/images/paw-print.png"),
+              fit: BoxFit.cover,
+              colorFilter: ColorFilter.mode(
+                  Colors.black.withOpacity(0.68), BlendMode.darken)),
+        ),
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  child: SizedBox(
+                    height: 250,
+                    child: CachedNetworkImage(
+                      imageUrl: book.imageUrl!,
+                      placeholder: (context, url) =>
+                          CircularProgressIndicator(),
+                      errorWidget: (context, url, error) => Icon(Icons.error),
+                    ),
                   ),
+                  alignment: Alignment.topCenter,
                 ),
-                alignment: Alignment.topCenter,
-              ),
-              SizedBox(height: 16),
-              Text(
-                'Autor(a): ${book.author}',
-              ),
-              SizedBox(height: 8),
-              Text('Descrição: ${book.description}'),
-              SizedBox(height: 8),
-              Text('Data de Publicação: ${book.publishedDate
-                  //DateFormat("dd/MM/yyyy").format(DateTime.parse(book.publishedDate))
-                  }'),
-              SizedBox(height: 8),
-              Text('Número de Páginas: ${book.pageCount}'),
-              SizedBox(height: 8),
-              Text('Editora: ${book.publisher}'),
-              SizedBox(height: 8),
-              Text('Categoria(s): ${book.categories!.join(', ')}'),
-              SizedBox(height: 16),
-              SizedBox(height: 16),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  Container(
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.amber, width: 5.5),
-                      shape: BoxShape.circle,
-                    ),
-                    child: IconButton(
-                      iconSize: 56,
-                      icon: Icon(Icons.add_shopping_cart_rounded,
-                          color: Colors.amber),
-                      onPressed: () {
-                        _launchURL(book.buyLink!);
-                      },
-                    ),
+                SizedBox(height: 16),
+                Text('Autor(a): ${book.author}',
+                    style: GoogleFonts.vt323(
+                      textStyle: TextStyle(letterSpacing: .15, fontSize: 24),
+                    )),
+                SizedBox(height: 16),
+                Text(
+                  'Descrição: ${book.description}',
+                  style: GoogleFonts.vt323(
+                    textStyle: TextStyle(
+                        letterSpacing: .15,
+                        wordSpacing: -8,
+                        fontSize: 24,
+                        fontWeight: FontWeight.w100),
                   ),
-                  Container(
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                          color: Colors.deepPurpleAccent, width: 5.5),
-                      shape: BoxShape.circle,
+                  textAlign: TextAlign.justify,
+                ),
+                SizedBox(height: 16),
+                Text(
+                    'Data de Publicação: ${book.publishedDate
+                    //DateFormat("dd/MM/yyyy").format(DateTime.parse(book.publishedDate))
+                    }',
+                    style: GoogleFonts.vt323(
+                      textStyle: TextStyle(letterSpacing: .15, fontSize: 24),
+                    )),
+                SizedBox(height: 16),
+                Text('Número de Páginas: ${book.pageCount}',
+                    style: GoogleFonts.vt323(
+                      textStyle: TextStyle(letterSpacing: .15, fontSize: 24),
+                    )),
+                SizedBox(height: 16),
+                Text('Editora: ${book.publisher}',
+                    style: GoogleFonts.vt323(
+                      textStyle: TextStyle(letterSpacing: .15, fontSize: 24),
+                    )),
+                SizedBox(height: 16),
+                Text('Categoria(s): ${book.categories!.join(', ')}',
+                    style: GoogleFonts.vt323(
+                      textStyle: TextStyle(letterSpacing: .15, fontSize: 24),
+                    )),
+                SizedBox(height: 32),
+                Stack(
+                  children: [
+                    Align(
+                      alignment: Alignment.center,
+                      child: Image(
+                          image: AssetImage("assets/images/cruelo-plain.png")),
                     ),
                     child: IconButton(
                       iconSize: 56,
@@ -105,11 +125,11 @@ class BookDetailScreen extends StatelessWidget {
                         );
                       },
                     ),
-                  ),
-                ],
-              ),
-              // Adicione mais detalhes conforme necessário
-            ],
+                  ],
+                ),
+                // Adicione mais detalhes conforme necessário
+              ],
+            ),
           ),
         ),
       ),

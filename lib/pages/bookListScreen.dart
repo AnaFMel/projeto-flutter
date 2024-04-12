@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:cached_network_image/cached_network_image.dart';
@@ -93,15 +94,37 @@ class _BookListScreenState extends State<BookListScreen> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title:
-            Text('CRUELO LIVROS', style: GoogleFonts.getFont('VT323')),
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text('CRUELO',
+                style: GoogleFonts.vt323(
+                  textStyle: TextStyle(
+                      letterSpacing: .5, fontSize: 50, wordSpacing: -9),
+                )),
+            Padding(
+              padding: const EdgeInsets.only(right: 20, left: 20),
+              child: Image(
+                image: AssetImage("assets/images/logo.png"),
+                width: 40,
+                height: 40,
+              ),
+            ),
+            Text('LIVROS',
+                style: GoogleFonts.vt323(
+                  textStyle: TextStyle(
+                      letterSpacing: .5, fontSize: 50, wordSpacing: -9),
+                )),
+          ],
+        ),
       ),
       body: Container(
         decoration: BoxDecoration(
           image: DecorationImage(
               image: AssetImage("assets/images/empty-home.png"),
               fit: BoxFit.cover,
-              colorFilter: ColorFilter.mode(Colors.black.withOpacity(0.65), BlendMode.darken)),
+              colorFilter: ColorFilter.mode(
+                  Colors.black.withOpacity(0.65), BlendMode.darken)),
         ),
         child: Column(
           children: [
@@ -109,8 +132,18 @@ class _BookListScreenState extends State<BookListScreen> {
               padding: const EdgeInsets.all(8.0),
               child: TextField(
                 controller: _searchController,
+                style: GoogleFonts.vt323(
+                    textStyle: TextStyle(
+                        letterSpacing: .15,
+                        fontSize: 40,
+                        fontWeight: FontWeight.w500)),
                 decoration: InputDecoration(
                   labelText: 'Buscar Livros',
+                  labelStyle: GoogleFonts.vt323(
+                      textStyle: TextStyle(
+                          letterSpacing: .15,
+                          fontSize: 30,
+                          fontWeight: FontWeight.w500)),
                   suffixIcon: IconButton(
                     icon: Icon(Icons.search),
                     onPressed: _searchBooks,
@@ -122,29 +155,52 @@ class _BookListScreenState extends State<BookListScreen> {
               child: _isLoading
                   ? Center(child: CircularProgressIndicator())
                   : _books.isEmpty
-                      ? Center(child: Text("Não encontramos nenhum livro...", style: TextStyle(fontSize: 20, color: Colors.white),))
+                      ? Center(
+                          child: Text("Não encontramos nenhum livro...",
+                              style: GoogleFonts.vt323(
+                                textStyle:
+                                    TextStyle(letterSpacing: .5, fontSize: 25),
+                              )))
                       : ListView.builder(
                           itemCount: _books.length,
                           itemBuilder: (context, index) {
-                            return ListTile(
-                              title: Text(_books[index].title!),
-                              subtitle: Text(_books[index].author!),
-                              leading: CachedNetworkImage(
-                                imageUrl: _books[index].imageUrl!,
-                                placeholder: (context, url) =>
-                                    CircularProgressIndicator(),
-                                errorWidget: (context, url, error) =>
-                                    Icon(Icons.error),
+                            return Padding(
+                              padding: const EdgeInsets.all(3.0),
+                              child: ListTile(
+                                title: Text(
+                                  _books[index].title!,
+                                  style: GoogleFonts.vt323(
+                                      textStyle: TextStyle(
+                                          letterSpacing: .15,
+                                          fontSize: 22,
+                                          fontWeight: FontWeight.w500)),
+                                ),
+                                subtitle: Text(
+                                  _books[index].author!,
+                                  style: GoogleFonts.vt323(
+                                      textStyle: TextStyle(
+                                          letterSpacing: .15,
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.w500)),
+                                ),
+                                leading: CachedNetworkImage(
+                                  imageUrl: _books[index].imageUrl!,
+                                  fit: BoxFit.fill,
+                                  placeholder: (context, url) =>
+                                      CircularProgressIndicator(),
+                                  errorWidget: (context, url, error) =>
+                                      Icon(Icons.error),
+                                ),
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          BookDetailScreen(book: _books[index]),
+                                    ),
+                                  );
+                                },
                               ),
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) =>
-                                        BookDetailScreen(book: _books[index]),
-                                  ),
-                                );
-                              },
                             );
                           },
                         ),
