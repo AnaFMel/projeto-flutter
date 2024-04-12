@@ -42,10 +42,8 @@ class _ReadingListState extends State<ReadingList> {
   }
 
   Future<void> _deleteBook(String title) async {
-    // Chama a função do SqliteService para excluir o livro pelo título
     await _sqliteService.deleteBookByTitle(title);
 
-    // Atualiza a lista de livros após a exclusão
     await _loadBooks();
   }
 
@@ -94,7 +92,6 @@ class _ReadingListState extends State<ReadingList> {
                             trailing: IconButton(
                               icon: Icon(Icons.delete),
                               onPressed: () async {
-                                // Chama a função de exclusão do livro
                                 await _deleteBook(book.title ?? '');
                               },
                             ),

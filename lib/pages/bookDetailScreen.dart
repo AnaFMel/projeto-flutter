@@ -73,7 +73,6 @@ class BookDetailScreen extends StatelessWidget {
                 SizedBox(height: 16),
                 Text(
                     'Data de Publicação: ${book.publishedDate
-                    //DateFormat("dd/MM/yyyy").format(DateTime.parse(book.publishedDate))
                     }',
                     style: GoogleFonts.vt323(
                       textStyle: TextStyle(letterSpacing: .15, fontSize: 24),
@@ -96,33 +95,45 @@ class BookDetailScreen extends StatelessWidget {
                 SizedBox(height: 32),
                 Stack(
                   children: [
-                    IconButton(
-                      iconSize: 56,
-                      icon: Icon(Icons.bookmark_add_outlined,
-                          color: Colors.deepPurpleAccent),
-                      onPressed: () async{
-                         int id = await sqliteService.insertBook(
-                            book.title ?? '', // Certifique-se de que os valores não sejam nulos
-                            book.author ?? '',
-                            book.description ?? '',
-                          );
+                    Align(
+                      alignment: Alignment.center,
+                      child: Image(
+                          image: AssetImage("assets/images/cruelo-plain.png")),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 65),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          IconButton(
+                            iconSize: 56,
+                            icon: Icon(Icons.bookmark_add_outlined,
+                                color: Colors.black),
+                            onPressed: () async{
+                               int id = await sqliteService.insertBook(
+                                  book.title ?? '',
+                                  book.author ?? '',
+                                  book.description ?? '',
+                                );
 
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                                content: Text('Livro adicionado à lista de leitura!'),
-                                  ),
-                            );
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                      content: Text('Livro adicionado à lista de leitura!'),
+                                        ),
+                                  );
 
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => ReadingList()),
-                        );
-                      },
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => ReadingList()),
+                              );
+                            },
+                          ),
+                        ],
+                      ),
                     ),
                   ],
                 ),
-                // Adicione mais detalhes conforme necessário
               ],
             ),
           ),

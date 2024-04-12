@@ -39,7 +39,6 @@ class _BookListScreenState extends State<BookListScreen> {
         _books = books;
       });
     } catch (e) {
-      // Handle error
       print('Error: $e');
     } finally {
       setState(() {
