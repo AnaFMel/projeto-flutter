@@ -96,12 +96,7 @@ class BookDetailScreen extends StatelessWidget {
                 SizedBox(height: 32),
                 Stack(
                   children: [
-                    Align(
-                      alignment: Alignment.center,
-                      child: Image(
-                          image: AssetImage("assets/images/cruelo-plain.png")),
-                    ),
-                    child: IconButton(
+                    IconButton(
                       iconSize: 56,
                       icon: Icon(Icons.bookmark_add_outlined,
                           color: Colors.deepPurpleAccent),
