@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:sqflite/sqflite.dart';
+import 'package:path/path.dart';
 import '../models/book.dart';
-import '../repositories/reading_list_repository.dart';
 import 'bookDetailScreen.dart';
+import '../repositories/sqlite.dart';
 
 class ReadingList extends StatefulWidget {
   const ReadingList({super.key});
@@ -13,20 +15,38 @@ class ReadingList extends StatefulWidget {
 }
 
 class _ReadingListState extends State<ReadingList> {
-  TextEditingController LivroController = TextEditingController();
+  final SqliteService _sqliteService = SqliteService();
 
-  ReadingListRepository _readingListRepository = ReadingListRepository();
   List<Book> livros = [];
-  bool _isLoading = false;
+  bool _isLoading = true;
+
+  Future<void> _loadBooks() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    List<Map<String, dynamic>> bookMaps = await _sqliteService.getAllBooks();
+
+    List<Book> books = bookMaps.map((bookMap) => Book.fromMap(bookMap)).toList();
+
+    setState(() {
+      livros = books;
+      _isLoading = false;
+    });
+  }
 
   @override
   void initState() {
     super.initState();
-    _readingListRepository.ObterLista().then((dados) {
-      setState(() {
-        livros = dados;
-      });
-    });
+    _loadBooks();
+  }
+
+  Future<void> _deleteBook(String title) async {
+    // Chama a função do SqliteService para excluir o livro pelo título
+    await _sqliteService.deleteBookByTitle(title);
+
+    // Atualiza a lista de livros após a exclusão
+    await _loadBooks();
   }
 
   @override
@@ -53,24 +73,31 @@ class _ReadingListState extends State<ReadingList> {
                 : livros.isEmpty
                     ? Center(child: Text('Nenhum livro encontrado'))
                     : ListView.builder(
-                        itemCount: livros!.length,
+                        itemCount: livros.length,
                         itemBuilder: (context, index) {
+                          Book book = livros[index];
                           return ListTile(
-                            title: Text(livros![index].title!),
-                            subtitle: Text(livros![index].author!),
-                            leading: CachedNetworkImage(
-                              imageUrl: livros![index].imageUrl!,
-                              placeholder: (context, url) =>
-                                  CircularProgressIndicator(),
-                              errorWidget: (context, url, error) =>
-                                  Icon(Icons.error),
+                            title: Text(book.title ?? ''),
+                            subtitle: Text(book.author ?? ''),
+                            leading: book.imageUrl != null && book.imageUrl!.isNotEmpty
+                                ? CachedNetworkImage(
+                                    imageUrl: book.imageUrl!,
+                                    placeholder: (context, url) => CircularProgressIndicator(),
+                                    errorWidget: (context, url, error) => Icon(Icons.error),
+                                  )
+                                : null,
+                            trailing: IconButton(
+                              icon: Icon(Icons.delete),
+                              onPressed: () async {
+                                // Chama a função de exclusão do livro
+                                await _deleteBook(book.title ?? '');
+                              },
                             ),
                             onTap: () {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) =>
-                                      BookDetailScreen(book: livros![index]),
+                                  builder: (context) => BookDetailScreen(book: book),
                                 ),
                               );
                             },

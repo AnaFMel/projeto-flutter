@@ -4,7 +4,6 @@ import 'package:http/http.dart' as http;
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:livraria_flutter/pages/ReadingList.dart';
 import '../models/book.dart';
-import '../repositories/reading_list_repository.dart';
 import 'bookDetailScreen.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -27,8 +26,6 @@ class _BookListScreenState extends State<BookListScreen> {
     super.initState();
     _searchBooks();
   }
-
-  ReadingListRepository _readingListRepository = ReadingListRepository();
 
   Future<void> _searchBooks() async {
     setState(() {

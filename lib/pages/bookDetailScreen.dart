@@ -2,15 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:livraria_flutter/pages/ReadingList.dart';
-import 'package:livraria_flutter/repositories/reading_list_repository.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:intl/intl.dart';
+import 'package:sqflite/sqflite.dart';
+import 'package:path/path.dart';
 
+import '../repositories/sqlite.dart';
 import '../models/book.dart';
 
 class BookDetailScreen extends StatelessWidget {
   final Book book;
-  ReadingListRepository _readingListRepository = ReadingListRepository();
+  final sqliteService = SqliteService();
 
   BookDetailScreen({required this.book});
 
@@ -83,8 +85,19 @@ class BookDetailScreen extends StatelessWidget {
                       iconSize: 56,
                       icon: Icon(Icons.bookmark_add_outlined,
                           color: Colors.deepPurpleAccent),
-                      onPressed: () {
-                        _readingListRepository.AdicionarLivroNaLista(book);
+                      onPressed: () async{
+                         int id = await sqliteService.insertBook(
+                            book.title ?? '', // Certifique-se de que os valores não sejam nulos
+                            book.author ?? '',
+                            book.description ?? '',
+                          );
+
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                                content: Text('Livro adicionado à lista de leitura!'),
+                                  ),
+                            );
+
                         Navigator.push(
                           context,
                           MaterialPageRoute(
